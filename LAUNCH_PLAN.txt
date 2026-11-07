@@ -1,0 +1,213 @@
+SHOTFORGE - LAUNCH PLAN
+=======================
+Work through the sections in order. Tick each box before moving on.
+(Gumroad's screens change from time to time - if a label below doesn't match
+what you see, use the closest option and tell me what it says.)
+
+
+A. FINAL CHECKS ON YOUR OWN PC  (Debug build, from the repo folder)
+-------------------------------------------------------------------
+[ ] FREE path: run   dotnet run --project src/ShotForge.App
+      - badge says FREE, "Unlock Pro" button visible
+      - with 1 project present, trying to add another shows the limit message
+      - existing projects/scenes/shots all still work
+[ ] PRO path: run    dotnet run --project src/ShotForge.App -- --force-pro
+      - title bar says "Pro override ON", badge says PRO, no Unlock button
+      - you can add as many projects as you like
+[ ] Click Unlock Pro (Free run). Window opens. Typing a fake key and clicking
+      Activate should say "Licensing isn't set up in this build yet" (correct
+      until the Gumroad product ID is filled in - see section C).
+[ ] Theme toggle (Dark/Light) works and is remembered after closing/reopening.
+[ ] Export Project works in both .txt and .json.
+[ ] Prompt options: tag two characters on a shot, add a negative prompt, then
+      - Copy Prompt with both boxes in their default state: you should see the
+        description, a "Duration: N seconds" line, a "Characters:" line and
+        the style, but NO negative text
+      - tick "Put negative prompt inside the prompt" and Copy Prompt again:
+        a "Negative prompt:" line appears
+      - untick "Include character descriptions": the Characters line disappears
+      - untick "Include shot duration": the Duration line disappears
+      - Export Project: the .txt shows the same prompt, plus a separate
+        "Negative prompt: ..." line when the negative is kept separate
+
+
+B. CLEAN-MACHINE TEST  (the most important test before selling)
+---------------------------------------------------------------
+Why: your PC has Visual Studio and .NET, so it hides problems a customer
+would hit. Use a PC (or a Windows virtual machine) that has NEVER had
+Visual Studio or .NET developer tools installed.
+
+1. Build a fresh installer with a version number higher than any before:
+      powershell -ExecutionPolicy Bypass -File .\build-installer.ps1 -Version 1.0.4
+   Result: Releases\ShotForge-win-Setup.exe
+2. Copy ONLY that one file to the clean PC (USB stick or cloud storage).
+3. Double-click it. Windows will probably show a blue "Windows protected your
+   PC" screen (the app is unsigned). Click "More info", then "Run anyway".
+   WRITE DOWN exactly what you see - this is what your customers will see.
+4. Check:
+   [ ] Installs without asking for anything else (no ".NET required" message)
+   [ ] Desktop shortcut and Start Menu entry appear, with the camera icon
+   [ ] App opens, badge says FREE (NOT PRO - the dev override must be absent)
+   [ ] Create a project, scene, shot, character with an image
+   [ ] Copy Prompt puts text on the clipboard (paste it into Notepad)
+   [ ] Export Project saves a file
+   [ ] Close and reopen: everything is still there
+   [ ] Uninstall (Windows Settings > Apps) removes the program cleanly
+5. If anything fails, send me the exact message or a screenshot.
+
+
+C. GUMROAD SETUP
+----------------
+[ ] Create a Gumroad account and a new product (digital download).
+[ ] Upload  Releases\ShotForge-win-Setup.exe  as the product file.
+[ ] Turn ON licence keys for the product so each sale gets a unique key.
+      In Gumroad's current layout this is reported to be on the product's
+      CONTENT page: three-dot menu > "License key" (the key module can be
+      dragged to where you want it). Labels move around - use the closest
+      option and tell me what you see.
+[ ] Find the product's ID (shown alongside the licence-key settings) and the
+      product page's public web address.
+[ ] Put both into  src\ShotForge.App\Services\LicenseConfig.cs :
+        GumroadProductId = "paste-the-id-here";
+        PurchaseUrl      = "https://...your product page...";
+[ ] Rebuild the installer with a NEW version number (e.g. 1.0.5) and upload
+      that file to the product, replacing the old one.
+[ ] Make a test purchase of your own product (check Gumroad's current options
+      for test purchases or a 100%-off discount code). You receive a key.
+[ ] On the clean PC: install, click Unlock Pro, paste the key, Activate.
+      Expect "Pro unlocked", badge changes to PRO, can add many projects.
+[ ] Also type a made-up key: it should be rejected with a clear message
+      ("That key wasn't recognised...") and the app should stay on Free.
+
+
+D. LISTING COPY (first draft - edit freely)
+-------------------------------------------
+TITLE
+  ShotForge - Shot List Planner for AI Video Creators
+
+ONE-LINE SUMMARY
+  Plan every scene and shot of your AI video, keep your characters consistent,
+  and copy ready-to-paste prompts into any AI video tool.
+
+DESCRIPTION
+  Making a video with AI generators means juggling dozens of short clips,
+  prompts and character references. ShotForge keeps all of it in one place.
+
+  - Organise work as Projects > Scenes > Shots
+  - Keep a character roster with reference images and standing descriptions
+  - Tag which characters appear in each shot
+  - Add a negative prompt and a style line per shot
+  - Choose how prompts are copied to suit your tool: include character
+    descriptions, the shot duration and/or the negative prompt
+  - One click copies a clean, ready-to-paste prompt for any AI video tool
+  - Export a whole project as a text file, or as structured JSON
+  - Dark and light themes
+  - Your projects stay on your own computer - no account, no cloud, no tracking
+
+FREE vs PRO
+  Free:  1 project, every feature included.
+  Pro:   unlimited projects. One-time purchase, no subscription.
+
+REQUIREMENTS
+  Windows 10 or 11 (64-bit). Nothing else to install.
+
+FAQ
+  Does it work offline?    Yes. Pro needs the internet only to activate your
+                           key and for an occasional quiet re-check.
+  Does it generate video?  No. It organises your plan and prepares prompts;
+                           you paste them into the AI video tool you use.
+  Is it for Mac / phone?   Windows only for now.
+  Why does Windows warn me when I install?
+                           ShotForge is a new, independent app and isn't
+                           code-signed yet. Click "More info" then "Run
+                           anyway". (Add your own wording/screenshots.)
+
+IMAGES (already made, in the assets folder)
+  Cover      assets\ShotForge_Gumroad_Cover_1280x720.png     (1280x720, 72 dpi)
+  Thumbnail  assets\ShotForge_Gumroad_Thumbnail_600x600.png  (square, optional;
+             shows in customers' libraries, Discover and your profile page)
+  Gumroad recommends covers of at least 1280x720 at 72 dpi. If you add several
+  cover images, make them all the same height.
+
+SCREENSHOTS TO TAKE (use your own real project, in dark AND light mode)
+  1. The three-column main window with a project open
+  2. A shot card showing character tags + negative prompt
+  3. The Manage Characters window with reference images
+  4. Light theme version of screenshot 1
+  5. The Export dialog or an exported file open in Notepad
+
+
+E. DECISIONS STILL OPEN
+-----------------------
+[ ] Price (one-time).  Starting suggestion: $19-29. A Gumroad discount code can
+      give early buyers a lower price without changing the app.
+[ ] Refund policy wording on the listing (you choose; keep it simple).
+[ ] Support contact - an email address buyers can reach you on. The Unlock
+      window's "too many activations" message tells people to contact support,
+      so this needs to exist before launch.
+[ ] Code signing: launch unsigned with the FAQ note above; revisit once there
+      are sales. Check what's available to you in South Africa when ready.
+[ ] Mac/other platforms: not for launch.
+
+
+F. AFTER LAUNCH
+---------------
+- Keep the whole Releases folder between versions (updates need it).
+- Bump the version number every release.
+- Keep your own copy of the project folder (ideally in Git).
+
+
+G. HOME PAGE AND CUSTOM DOMAIN
+------------------------------
+Short version: you do NOT need either to launch. Add them when sales justify it.
+
+1. Gumroad already gives you a simple website. Your Gumroad profile can have
+   pages and sections (products, text, a mailing-list signup), and each product
+   has its own page. That is enough to sell ShotForge on day one.
+
+2. A custom domain is optional (e.g. shotforge.yourdomain instead of
+   yourname.gumroad.com). Gumroad supports it for your whole profile or for a
+   single product, and provides the security certificate (https) free.
+   How it works: you buy a domain from a registrar, add the DNS record Gumroad
+   asks for (usually a CNAME), then click Verify in Gumroad's advanced
+   settings. It can take a few hours, occasionally up to a day.
+   Catch: Gumroad does not support Cloudflare's proxy for verification, so if
+   you use Cloudflare for DNS, turn its proxy off for that record.
+
+3. A separate home page for ShotForge (your own one-page site, with the
+   screenshots, a short demo video and a Buy button linking to Gumroad) is
+   worth building once you are posting videos or ads and want a page you fully
+   control. A one-page site can be hosted on free static hosting (check the
+   current free-plan terms of GitHub Pages, Netlify or Cloudflare Pages).
+   I can build the page in the ShotForge look when you want it.
+
+4. A domain also lets you have a professional support address
+   (support@yourdomain). What email service comes with a domain depends on the
+   registrar, so check before you buy.
+
+5. Costs to plan for: the domain renews yearly (price depends on the name and
+   ending), and Gumroad keeps a percentage of each sale. One source reports
+   10% + $0.50 per sale - check Gumroad's current fees page before setting a
+   price. Example if that figure is right: a $19 sale would leave about $16.60.
+
+Recommended order: launch on Gumroad only -> see if people buy -> then buy a
+domain and put a one-page home page in front of it.
+
+
+H. FUTURE IDEAS (after launch - not needed for version 1.0)
+-----------------------------------------------------------
+- SCENE SCRIPTS. Start simple: a "Script / notes" text box on each scene
+  (narration, dialogue), shown on the scene and included in exports. Attaching
+  script FILES or auto-splitting an imported script into scenes is a much bigger
+  job - leave for later, and only if buyers ask.
+  NOTE: this changes the database (a new field on scenes). The app only creates
+  its database when none exists, so existing customers would need a small
+  upgrade step that adds the field safely. Build and test that on a COPY of a
+  real database before releasing.
+- PROMPT PROFILES: one-click formats for specific AI video tools (separate
+  negative box, reference-image rules, clip-length limits).
+- MAC VERSION: same code base; needs a Mac to build, test and sign.
+- HOME PAGE + CUSTOM DOMAIN: see section G.
+- CODE SIGNING: once sales justify the yearly certificate cost.
+- DATABASE UPGRADE STEP: any release that adds or changes stored fields needs
+  this first. Plan it once, reuse it for every later feature.

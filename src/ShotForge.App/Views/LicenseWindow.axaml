@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ShotForge.App.ViewModels"
+        x:Class="ShotForge.App.Views.LicenseWindow"
+        x:DataType="vm:LicenseWindowViewModel"
+        Icon="/Assets/ShotForge.ico"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Title="Unlock ShotForge Pro"
+        Width="480" Height="330"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+  <StackPanel Margin="24" Spacing="12">
+    <TextBlock Text="Unlock ShotForge Pro" FontSize="20" FontWeight="Bold" />
+
+    <TextBlock TextWrapping="Wrap"
+               Foreground="{DynamicResource SecondaryTextBrush}"
+               Text="Pro removes the one-project limit so you can plan as many videos as you like. Paste the licence key from your Gumroad receipt email below." />
+
+    <TextBox Watermark="Paste your licence key..."
+             Text="{Binding LicenseKey}" />
+
+    <TextBlock TextWrapping="Wrap"
+               Foreground="{DynamicResource AccentBrush}"
+               Text="{Binding StatusMessage}"
+               IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+    <DockPanel Margin="0,8,0,0">
+      <Button DockPanel.Dock="Right"
+              Content="Activate"
+              Command="{Binding ActivateCommand}" />
+      <Button Content="Buy Pro"
+              HorizontalAlignment="Left"
+              Click="OnBuyClick" />
+    </DockPanel>
+  </StackPanel>
+
+</Window>

@@ -1,0 +1,304 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ShotForge.App.ViewModels"
+        xmlns:core="using:ShotForge.Core.Models"
+        x:Class="ShotForge.App.Views.MainWindow"
+        x:Name="RootWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/ShotForge.ico"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Title="{Binding WindowTitle}"
+        Width="1300" Height="650"
+        WindowStartupLocation="CenterScreen">
+
+  <Grid Margin="20" RowDefinitions="Auto,*">
+
+    <!-- Header row: app title + license badge -->
+    <DockPanel Grid.Row="0" Margin="0,0,0,16">
+      <Border DockPanel.Dock="Right"
+              Background="{DynamicResource BadgeBackgroundBrush}" CornerRadius="6" Padding="10,4">
+        <TextBlock Text="{Binding LicenseBadgeText}"
+                   FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+      </Border>
+      <Button DockPanel.Dock="Right"
+              Content="Unlock Pro"
+              Margin="0,0,10,0"
+              Command="{Binding UnlockProCommand}"
+              IsVisible="{Binding IsFreeTier}" />
+      <TextBlock Text="ShotForge" FontSize="24" FontWeight="Bold" />
+    </DockPanel>
+
+    <!-- Three-column body: Projects | Scenes for selected Project | Shots for selected Scene -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,16,*,16,1.3*">
+
+      <!-- LEFT COLUMN: Projects -->
+      <Grid Grid.Column="0" RowDefinitions="Auto,*,Auto">
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,16" Spacing="8">
+          <DockPanel>
+          <Button DockPanel.Dock="Right"
+                  Content="{Binding AddOrUpdateProjectButtonText}"
+                  Command="{Binding AddProjectCommand}"
+                  Margin="8,0,0,0" />
+          <Button DockPanel.Dock="Right"
+                  Content="Cancel"
+                  Command="{Binding CancelEditProjectCommand}"
+                  IsVisible="{Binding IsEditingProject}"
+                  Margin="8,0,0,0" />
+          <TextBox Watermark="New project name..."
+                   Text="{Binding NewProjectName}" />
+        </DockPanel>
+          <TextBlock TextWrapping="Wrap"
+                     Foreground="{DynamicResource AccentBrush}"
+                     Text="{Binding LimitMessage}"
+                     IsVisible="{Binding LimitMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </StackPanel>
+
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Projects}"
+                 SelectedItem="{Binding SelectedProject}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="core:Project">
+              <DockPanel Margin="4">
+                <Button DockPanel.Dock="Right"
+                        Content="Delete"
+                        x:CompileBindings="False"
+                        Command="{Binding DataContext.DeleteProjectCommand, ElementName=RootWindow}"
+                        CommandParameter="{Binding}" />
+                <Button DockPanel.Dock="Right"
+                        Content="Edit"
+                        Margin="0,0,8,0"
+                        x:CompileBindings="False"
+                        Command="{Binding DataContext.EditProjectCommand, ElementName=RootWindow}"
+                        CommandParameter="{Binding}" />
+                <TextBlock Text="{Binding Name}"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Margin="0,0,8,0" />
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Copied-prompt options + theme, both remembered between launches -->
+        <StackPanel Grid.Row="2" Margin="0,12,0,0" Spacing="8">
+          <TextBlock Text="Copied prompt" FontWeight="SemiBold"
+                     Foreground="{DynamicResource SecondaryTextBrush}" />
+          <CheckBox Content="Include character descriptions"
+                    IsChecked="{Binding IncludeCharacterDescriptions}" />
+          <CheckBox Content="Include shot duration"
+                    IsChecked="{Binding IncludeDuration}" />
+          <CheckBox Content="Put negative prompt inside the prompt"
+                    IsChecked="{Binding IncludeNegativeInPrompt}" />
+          <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,6,0,0">
+            <TextBlock Text="Theme" VerticalAlignment="Center"
+                       Foreground="{DynamicResource SecondaryTextBrush}" />
+            <ToggleSwitch IsChecked="{Binding IsDarkMode}" OnContent="Dark" OffContent="Light" />
+          </StackPanel>
+        </StackPanel>
+      </Grid>
+
+      <!-- Vertical divider -->
+      <Border Grid.Column="1" Width="1" Background="{DynamicResource DividerBrush}" />
+
+      <!-- MIDDLE COLUMN: Scenes for whichever Project is selected -->
+      <Grid Grid.Column="2" RowDefinitions="Auto,Auto,Auto,*">
+
+        <TextBlock Grid.Row="0" Margin="0,0,0,10" FontSize="16" FontWeight="Bold"
+                   TextTrimming="CharacterEllipsis"
+                   Text="{Binding SelectedProject.Name, StringFormat='Scenes — {0}', TargetNullValue='Scenes', FallbackValue='Scenes'}" />
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,16" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Spacing="8">
+          <Button Content="Manage Characters"
+                  Command="{Binding ManageCharactersCommand}" />
+          <Button Content="Export Project"
+                  Command="{Binding ExportProjectCommand}" />
+        </StackPanel>
+
+        <DockPanel Grid.Row="2" Margin="0,0,0,16"
+                   IsEnabled="{Binding SelectedProject, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <Button DockPanel.Dock="Right"
+                  Content="{Binding AddOrUpdateSceneButtonText}"
+                  Command="{Binding AddSceneCommand}"
+                  Margin="8,0,0,0" />
+          <Button DockPanel.Dock="Right"
+                  Content="Cancel"
+                  Command="{Binding CancelEditSceneCommand}"
+                  IsVisible="{Binding IsEditingScene}"
+                  Margin="8,0,0,0" />
+          <TextBox Watermark="New scene title..."
+                   Text="{Binding NewSceneTitle}" />
+        </DockPanel>
+
+        <ListBox Grid.Row="3"
+                 ItemsSource="{Binding Scenes}"
+                 SelectedItem="{Binding SelectedScene}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="core:Scene">
+              <!-- Three columns: the "Scene N:" label, the title (wraps within
+                   its OWN column, so wrapped lines stay clear of the label),
+                   and the buttons. -->
+              <Grid Margin="4" ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Top" Margin="0,6,10,0"
+                           FontWeight="Bold"
+                           Text="{Binding SceneNumber, StringFormat='Scene {0}:'}" />
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Top" Margin="0,6,8,0"
+                           TextWrapping="Wrap"
+                           Text="{Binding Title}" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal"
+                            Spacing="8" VerticalAlignment="Top">
+                  <Button Content="Edit"
+                          x:CompileBindings="False"
+                          Command="{Binding DataContext.EditSceneCommand, ElementName=RootWindow}"
+                          CommandParameter="{Binding}" />
+                  <Button Content="Delete"
+                          x:CompileBindings="False"
+                          Command="{Binding DataContext.DeleteSceneCommand, ElementName=RootWindow}"
+                          CommandParameter="{Binding}" />
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Shown only when nothing is selected, so the empty panel explains itself -->
+        <TextBlock Grid.Row="3"
+                   Text="Select a project on the left to see its scenes."
+                   Foreground="{DynamicResource MutedTextBrush}"
+                   IsVisible="{Binding SelectedProject, Converter={x:Static ObjectConverters.IsNull}}" />
+      </Grid>
+
+      <!-- Vertical divider -->
+      <Border Grid.Column="3" Width="1" Background="{DynamicResource DividerBrush}" />
+
+      <!-- RIGHT COLUMN: Shots for whichever Scene is selected -->
+      <Grid Grid.Column="4" RowDefinitions="Auto,Auto,*">
+
+        <TextBlock Grid.Row="0" Margin="0,0,0,16" FontSize="16" FontWeight="Bold"
+                   TextWrapping="Wrap"
+                   Text="{Binding ShotsHeaderText}" />
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,16" Spacing="6"
+                    IsEnabled="{Binding SelectedScene, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <TextBox Watermark="Shot description..."
+                   Text="{Binding NewShotDescription}"
+                   AcceptsReturn="True" Height="50" TextWrapping="Wrap" />
+
+          <TextBox Watermark="Negative prompt (optional)..."
+                   Text="{Binding NewShotNegativePrompt}"
+                   TextWrapping="Wrap" />
+
+          <TextBlock Text="Style (added to the end of every prompt):"
+                     Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,4,0,0" />
+          <TextBox Watermark="e.g. cinematic, soft lighting, 35mm film look (optional)..."
+                   Text="{Binding NewShotStyleLockTag}"
+                   TextWrapping="Wrap" />
+
+          <TextBlock Text="Characters in this shot:" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,4,0,0" />
+
+          <ItemsControl ItemsSource="{Binding AvailableCharacters}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:CharacterSelectionItem">
+                <CheckBox Content="{Binding Name}"
+                          IsChecked="{Binding IsSelected}"
+                          Margin="0,0,12,4" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <TextBlock Text="No characters yet — add some via Manage Characters."
+                     Foreground="{DynamicResource HintTextBrush}" FontStyle="Italic"
+                     IsVisible="{Binding HasNoAvailableCharacters}" />
+
+          <DockPanel Margin="0,4,0,0">
+            <TextBlock DockPanel.Dock="Left" Text="Duration (s):"
+                       VerticalAlignment="Center" Margin="0,0,8,0" />
+            <NumericUpDown DockPanel.Dock="Left" Width="110"
+                            Minimum="1" Maximum="60"
+                            FormatString="0"
+                            Value="{Binding NewShotDurationSeconds}" />
+            <Button DockPanel.Dock="Right"
+                    Content="{Binding AddOrUpdateShotButtonText}"
+                    Command="{Binding AddShotCommand}"
+                    Margin="8,0,0,0" />
+            <Button DockPanel.Dock="Right"
+                    Content="Cancel"
+                    Command="{Binding CancelEditShotCommand}"
+                    IsVisible="{Binding IsEditingShot}"
+                    Margin="8,0,0,0" />
+          </DockPanel>
+        </StackPanel>
+
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Shots}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="core:Shot">
+              <Border Margin="0,0,0,8" Padding="8"
+                      Background="{DynamicResource CardBackgroundBrush}" CornerRadius="4">
+                <StackPanel Spacing="6">
+                  <TextBlock TextWrapping="Wrap">
+                    <Run Text="{Binding ShotNumber, StringFormat='Shot {0}'}" FontWeight="Bold" />
+                    <Run Text="{Binding DurationSeconds, StringFormat=' ({0}s):'}" FontWeight="Bold" />
+                    <Run Text=" " />
+                    <Run Text="{Binding Description}" />
+                  </TextBlock>
+
+                  <ItemsControl ItemsSource="{Binding Characters}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <WrapPanel />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="core:Character">
+                        <Border Background="{DynamicResource ChipBackgroundBrush}" CornerRadius="10"
+                                Padding="8,2" Margin="0,0,6,0">
+                          <TextBlock Text="{Binding Name}" FontSize="11" />
+                        </Border>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+
+                  <TextBlock Text="{Binding NegativePrompt, StringFormat='Negative: {0}'}"
+                             Foreground="{DynamicResource SecondaryTextBrush}" FontStyle="Italic" TextWrapping="Wrap"
+                             IsVisible="{Binding NegativePrompt, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                  <DockPanel x:CompileBindings="False">
+                    <Button DockPanel.Dock="Right"
+                            Content="Delete"
+                            Command="{Binding DataContext.DeleteShotCommand, ElementName=RootWindow}"
+                            CommandParameter="{Binding}" />
+                    <Button DockPanel.Dock="Right"
+                            Content="Edit"
+                            Margin="0,0,8,0"
+                            Command="{Binding DataContext.EditShotCommand, ElementName=RootWindow}"
+                            CommandParameter="{Binding}" />
+                    <Button Content="Copy Prompt"
+                            Command="{Binding DataContext.CopyPromptCommand, ElementName=RootWindow}"
+                            CommandParameter="{Binding}" />
+                  </DockPanel>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Shown only when nothing is selected, so the empty panel explains itself -->
+        <TextBlock Grid.Row="2"
+                   Text="Select a scene in the middle column to see its shots."
+                   Foreground="{DynamicResource MutedTextBrush}"
+                   IsVisible="{Binding SelectedScene, Converter={x:Static ObjectConverters.IsNull}}" />
+      </Grid>
+
+    </Grid>
+
+  </Grid>
+
+</Window>

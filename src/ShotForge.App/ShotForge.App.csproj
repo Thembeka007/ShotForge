@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- Declared here so `dotnet publish` and `dotnet restore` both know
+         about it without needing -r on every command; the actual publish
+         script still passes -r win-x64 explicitly for clarity. -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <ApplicationIcon>Assets\ShotForge.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.3" />
+    <!-- Diagnostics only reaches release builds when explicitly built with the Debug configuration -->
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.1.3">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+
+    <!-- Fluent Design System theme (Windows 11-style) for a modern look -->
+    <PackageReference Include="FluentAvaloniaUI" Version="2.1.0" />
+
+    <!-- MVVM boilerplate removal -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+
+    <!-- Packaging/installer support. The `vpk` CLI tool used to build
+         the actual installer must be the SAME version as this package -
+         see build-installer.ps1 at the repo root. -->
+    <PackageReference Include="Velopack" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShotForge.Core\ShotForge.Core.csproj" />
+    <ProjectReference Include="..\ShotForge.Data\ShotForge.Data.csproj" />
+  </ItemGroup>
+
+</Project>

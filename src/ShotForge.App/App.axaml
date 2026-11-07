@@ -1,0 +1,51 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ShotForge.App.App"
+             xmlns:styling="using:FluentAvalonia.Styling">
+
+  <Application.Styles>
+    <!-- Fluent Design System theme: Windows-11-style rounded corners,
+         acrylic-adjacent surfaces, dark/light mode support out of the box -->
+    <styling:FluentAvaloniaTheme CustomAccentColor="#FF9F1C" />
+  </Application.Styles>
+
+  <!-- ONE place for the app's colours, in two variants. The Dark and Light
+       dictionaries hold the SAME key names with different values; the app
+       switches between them when the theme toggle is used. To re-theme
+       ShotForge, edit the Color values here - keep the names. Light mode is
+       deliberately a soft warm grey, never pure white. -->
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#202020" />  <!-- app background -->
+          <SolidColorBrush x:Key="AccentBrush"           Color="#FF9F1C" />  <!-- FREE/PRO badge text -->
+          <SolidColorBrush x:Key="BadgeBackgroundBrush"  Color="#2A2118" />  <!-- FREE/PRO badge fill -->
+          <SolidColorBrush x:Key="CardBackgroundBrush"   Color="#232323" />  <!-- shot + character cards -->
+          <SolidColorBrush x:Key="ChipBackgroundBrush"   Color="#333333" />  <!-- character tags on shots -->
+          <SolidColorBrush x:Key="DividerBrush"          Color="#3A3A3A" />  <!-- column dividers -->
+          <SolidColorBrush x:Key="ImageWellBrush"        Color="#141414" />  <!-- behind reference images -->
+          <SolidColorBrush x:Key="SecondaryTextBrush"    Color="#B8B8B8" />  <!-- descriptions, labels -->
+          <SolidColorBrush x:Key="MutedTextBrush"        Color="#8A8A8A" />  <!-- empty-state messages -->
+          <SolidColorBrush x:Key="HintTextBrush"         Color="#6A6A6A" />  <!-- faintest hints -->
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#EDEBE8" />
+          <SolidColorBrush x:Key="AccentBrush"           Color="#B35A00" />  <!-- darker amber so it reads on light -->
+          <SolidColorBrush x:Key="BadgeBackgroundBrush"  Color="#F9E3BE" />
+          <SolidColorBrush x:Key="CardBackgroundBrush"   Color="#F7F5F2" />
+          <SolidColorBrush x:Key="ChipBackgroundBrush"   Color="#DAD6D0" />
+          <SolidColorBrush x:Key="DividerBrush"          Color="#CBC6BF" />
+          <SolidColorBrush x:Key="ImageWellBrush"        Color="#E0DCD6" />
+          <SolidColorBrush x:Key="SecondaryTextBrush"    Color="#55504A" />
+          <SolidColorBrush x:Key="MutedTextBrush"        Color="#7A746C" />
+          <SolidColorBrush x:Key="HintTextBrush"         Color="#8F8880" />
+        </ResourceDictionary>
+
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+</Application>
